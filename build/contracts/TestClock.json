@@ -1,0 +1,45 @@
+{
+  "contract_name": "TestClock",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_date",
+          "type": "uint256"
+        }
+      ],
+      "name": "set_time",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "get_time",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "_date",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "constructor"
+    }
+  ],
+  "unlinked_binary": "0x6060604052341561000f57600080fd5b6040516020806100f3833981016040528080519150505b60008190555b505b60b78061003c6000396000f300606060405263ffffffff7c01000000000000000000000000000000000000000000000000000000006000350416638ae470a981146046578063966a196114605b575b600080fd5b3415605057600080fd5b6059600435607d565b005b3415606557600080fd5b606b6086565b60405190815260200160405180910390f35b60008190555b50565b425b905600a165627a7a7230582080a70a1ed504cb4cffa7f0e1a5e4c07c77f09d9b79e653ca561e565bf278586d0029",
+  "networks": {},
+  "schema_version": "0.0.5",
+  "updated_at": 1501915825586
+}

@@ -1,0 +1,27 @@
+{
+  "contract_name": "Foo",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "ftest",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "payable": false,
+      "type": "constructor"
+    }
+  ],
+  "unlinked_binary": "0x60606040523415600e57600080fd5b5b5b5b60928061001f6000396000f300606060405263ffffffff7c0100000000000000000000000000000000000000000000000000000000600035041663f56fa7818114603c575b600080fd5b3415604657600080fd5b604c6060565b604051901515815260200160405180910390f35b60005b905600a165627a7a723058205702f42569831b3630828dec8faee59ea0371c3604cfb27394ce148e49891e370029",
+  "networks": {},
+  "schema_version": "0.0.5",
+  "updated_at": 1501915825587
+}
