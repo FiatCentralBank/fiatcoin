@@ -1,11 +1,11 @@
-pragma solidity ^0.4.11;
+pragma solidity ^0.4.13;
 
 import './Clock.sol';
 
-contract TestClock is Clock {
+contract DebugClock is Clock {
   uint date;
 
-  function TestClock(uint _date)
+  function DebugClock(uint _date)
     public 
   {
     date = _date;
@@ -21,6 +21,6 @@ contract TestClock is Clock {
     public
     returns (uint)
   {
-    return now;
+    return date;
   }
 }

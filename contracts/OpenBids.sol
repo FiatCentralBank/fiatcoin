@@ -17,7 +17,7 @@ contract OpenBids is Ownable {
   struct Bid {
     address bidder;
     uint fiat; // amount of FTCs/fiat
-    uint rate; // FTC/ETH rate paid
+    uint rate; // FTC/ETH rate paid. how much fiat is 1 ether
     uint deposit; // total ETH amount paid = fiat*rate
     bool isWinner;
     uint next;  // linked list: next item
@@ -58,7 +58,7 @@ contract OpenBids is Ownable {
   bool public ended;
 
   // Clock object, abstracted in order to enable testing
-  Clock clock;
+  Clock public clock;
 
   // Events that will be fired on changes.
   event HighestBidIncreased(address bidder, uint amount);
@@ -77,7 +77,7 @@ contract OpenBids is Ownable {
       address _fiatcoin,
       uint _biddingTime,
       address _beneficiary,
-      Clock _clock,
+      address _clock,
       uint _minimumEth,
       uint _amountFiat
   ) {
@@ -85,9 +85,10 @@ contract OpenBids is Ownable {
       fiatcoin = FiatBase(_fiatcoin);
       libsort = new LibSort();
       beneficiary = _beneficiary;
-      auctionStart = now;
       biddingTime = _biddingTime;
-      clock = _clock;
+      clock = Clock(_clock);
+      uint time_now = clock.get_time();
+      auctionStart = time_now;
       minimumEth = _minimumEth;
       amountFiat = _amountFiat;
       cummulativeBidFiat = 0;
@@ -113,20 +114,21 @@ contract OpenBids is Ownable {
   /// auction is not won.
   function bid(uint _fiat) payable {
       require(minimumEth <= msg.value);
-      require(amountFiat <= fiatcoin.balanceOf(this));
+      uint balanceThis = fiatcoin.balanceOf(this);
+      require(amountFiat <= balanceThis);
       require(false == ended);
       uint time_now = clock.get_time();
       // The keyword payable
       // is required for the function to
       // be able to receive Ether.
 
-      require(time_now > auctionStart );
+      require(time_now >= auctionStart );
       // Revert the call if the bidding
       // period is over.
       require(time_now <= (auctionStart + biddingTime));
 
-      uint _rate = SafeMath.div(_fiat, msg.value);
-      require(SafeMath.mul(msg.value, _rate) == _fiat);
+      uint _rate = SafeMath.div(SafeMath.mul(1 ether, _fiat), msg.value);
+
       if (!searchAddress(msg.sender)) {
         addressList.push(msg.sender);
       }
@@ -266,12 +268,13 @@ contract OpenBids is Ownable {
 
       // 1. Conditions
       // auction should have ended
-      require(now >= (auctionStart + biddingTime));
+      uint time_now = clock.get_time();
+      require(time_now >= (auctionStart + biddingTime));
       // there should be enough FTC funds by now
       require(amountFiat <= fiatcoin.balanceOf(this));
       finalRate = calculateWinners();
       setAllowances();
       ended = true;
-      AuctionEnded(finalRate);
+      AuctionEnded(finalRate); 
   }
 }
