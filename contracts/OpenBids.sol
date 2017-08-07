@@ -64,6 +64,7 @@ contract OpenBids is Ownable {
   event HighestBidIncreased(address bidder, uint amount);
   event AuctionEnded(uint ftcEthRate);
   event AnnounceWinner(address winner, uint fiat);
+  event Debug(uint fiatBidAllowance, uint finalRate, uint etherBidAllowance);
 
   // The following is a so-called natspec comment,
   // recognizable by the three slashes.
@@ -222,18 +223,23 @@ contract OpenBids is Ownable {
              index < bids.list.length) {
         Bid memory bid = bids.list[index];
         if (true == bid.isWinner) {
+          uint fiatBidAllowance = 0;
           if (accumulatedFiatFinal + bid.fiat > fiatBalance) {
-            biddersAllowances[bid.bidder].fiat =
-              fiatBalance - accumulatedFiatFinal;
-            accumulatedFiatFinal += biddersAllowances[bid.bidder].fiat;
-            biddersAllowances[bid.bidder].eth =
-              bid.deposit -
-              SafeMath.mul(finalRate, biddersAllowances[bid.bidder].fiat);
+            fiatBidAllowance = fiatBalance - accumulatedFiatFinal;
+          } else {
+            fiatBidAllowance += bid.fiat;
           }
+          biddersAllowances[bid.bidder].fiat += fiatBidAllowance;
+          accumulatedFiatFinal += fiatBidAllowance;
+          uint etherBidAllowance = 
+            bid.deposit -
+            SafeMath.div(SafeMath.mul(1 ether, fiatBidAllowance), finalRate);
+          biddersAllowances[bid.bidder].eth += etherBidAllowance;
+          Debug(fiatBidAllowance, finalRate, etherBidAllowance);
         }
         // not a winner, return all ether sent
         else {
-          biddersAllowances[bid.bidder].eth = bid.deposit;
+          biddersAllowances[bid.bidder].eth += bid.deposit;
         }
         index = bid.next;
       }

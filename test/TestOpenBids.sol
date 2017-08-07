@@ -36,5 +36,10 @@ contract TestOpenBids {
     ob.auctionEnd();
     Assert.equal(ob.finalRate(), 25000 finney, "final rate is correct");
     Assert.equal(ob.balance, 2200 finney, "bid has money");
+    uint allowanceFiat;
+    uint allowanceEth;
+    (allowanceFiat, allowanceEth) = ob.biddersAllowances(this);
+    Assert.equal(allowanceFiat, 10 ether, "bids has the right fiat allowances");
+    Assert.equal(allowanceEth, 9600 finney, "bids has the right ether allowances");
   }
 }
