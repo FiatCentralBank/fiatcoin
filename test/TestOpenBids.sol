@@ -30,6 +30,7 @@ contract TestOpenBids {
     Assert.equal(fiatcoin.balanceOf(this), 1000 ether, "this has fiatcoins");
     Assert.equal(fiatcoin.transfer(ob, 1000 ether), true, "transfer fiatcoins to OpenBids contract");
     Assert.equal(fiatcoin.balanceOf(ob), 1000 ether, "ob has fiatcoins");
+    Assert.equal(ob.getBidsLength(), 0, "bids len 0");
     ob.bid.value(2000 finney)(5 ether);
     ob.bid.value(200 finney)(5 ether);
     clock.set_time(time_now + 2 hours);
@@ -40,6 +41,6 @@ contract TestOpenBids {
     uint allowanceEth;
     (allowanceFiat, allowanceEth) = ob.biddersAllowances(this);
     Assert.equal(allowanceFiat, 10 ether, "bids has the right fiat allowances");
-    Assert.equal(allowanceEth, 9600 finney, "bids has the right ether allowances");
+    Assert.equal(allowanceEth, 1800 finney, "bids has the right ether allowances");
   }
 }

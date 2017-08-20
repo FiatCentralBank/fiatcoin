@@ -64,7 +64,7 @@ contract OpenBids is Ownable {
   event HighestBidIncreased(address bidder, uint amount);
   event AuctionEnded(uint ftcEthRate);
   event AnnounceWinner(address winner, uint fiat);
-  event Debug(uint fiatBidAllowance, uint finalRate, uint etherBidAllowance);
+  event Debug(uint fiatBidAllowance, uint finalRate, uint etherBidAllowance, uint bidDeposit);
 
   // The following is a so-called natspec comment,
   // recognizable by the three slashes.
@@ -95,6 +95,17 @@ contract OpenBids is Ownable {
       cummulativeBidFiat = 0;
       finalRate = 0;
       ended = false;
+  }
+
+  function getBidsLength() returns (uint) {
+    return bids.list.length;
+  }
+
+  //function getBid(uint index) returns (address bidder, uint fiat, uint rate, uint deposit, bool isWinner, uint next, uint previous) {
+  function getBid(uint index) returns (uint previous) {
+    require(index <= bids.list.length);
+    Bid b = bids.list[index];
+    return (b.previous);
   }
 
   function searchAddress(address addr) internal returns (bool) {
@@ -144,6 +155,9 @@ contract OpenBids is Ownable {
       })) - 1;
       if (bidIndex > 0) {
         bids.list[bidIndex -1].next = bidIndex;
+      }
+      else {
+        bids.list[bidIndex].previous = uintMAX;
       }
       bids.tail = bids.list.length - 1;
       bidsMap[msg.sender].push(bidIndex);
@@ -235,7 +249,7 @@ contract OpenBids is Ownable {
             bid.deposit -
             SafeMath.div(SafeMath.mul(1 ether, fiatBidAllowance), finalRate);
           biddersAllowances[bid.bidder].eth += etherBidAllowance;
-          Debug(fiatBidAllowance, finalRate, etherBidAllowance);
+          Debug(fiatBidAllowance, finalRate, etherBidAllowance, bid.deposit);
         }
         // not a winner, return all ether sent
         else {
