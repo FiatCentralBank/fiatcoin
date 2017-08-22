@@ -89,12 +89,12 @@ contract OpenBids is Ownable {
       biddingTime = _biddingTime;
       clock = Clock(_clock);
       uint time_now = clock.get_time();
-      auctionStart = time_now;
+      /*auctionStart = time_now;
       minimumEth = _minimumEth;
       amountFiat = _amountFiat;
       cummulativeBidFiat = 0;
       finalRate = 0;
-      ended = false;
+      ended = false;*/
   }
 
   function getBidsLength() returns (uint) {
