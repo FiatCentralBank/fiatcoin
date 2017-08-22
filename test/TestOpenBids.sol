@@ -14,7 +14,7 @@ contract TestOpenBids {
   OpenBids ob;
   DebugClock clock;
 
-  function testOne() {/*
+  function testOne() {
     Assert.equal(this.balance, 90 ether, "should have ether");
     fiatcoin = new FiatBase();
     clock = new DebugClock(now);
@@ -41,6 +41,6 @@ contract TestOpenBids {
     uint allowanceEth;
     (allowanceFiat, allowanceEth) = ob.biddersAllowances(this);
     Assert.equal(allowanceFiat, 10 ether, "bids has the right fiat allowances");
-    Assert.equal(allowanceEth, 1800 finney, "bids has the right ether allowances");*/
+    Assert.equal(allowanceEth, 1800 finney, "bids has the right ether allowances");
   }
 }

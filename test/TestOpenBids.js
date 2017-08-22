@@ -1,7 +1,7 @@
 // Specifically request an abstraction for LibSort
 var LibSort = artifacts.require("./LibSort.sol");
 var SafeMath = artifacts.require("./SafeMath.sol");
-var NowClock = artifacts.require("./time/NowClock.sol");
+var DebugClock = artifacts.require("./time/DebugClock.sol");
 var FiatBase = artifacts.require("./FiatBase.sol");
 var OpenBids = artifacts.require("./OpenBids.sol");
 
@@ -21,9 +21,9 @@ contract('SafeMath', function(accounts) {
   });
 });
 
-contract('NowClock', function(accounts) {
-  it("should put 10000 NowClock in the first account", function() {
-    return NowClock.deployed().then(function(instance) {
+contract('DebugClock', function(accounts) {
+  it("should put 10000 DebugClock in the first account", function() {
+    return DebugClock.deployed().then(function(instance) {
       return true;
     });
   });
@@ -37,10 +37,18 @@ contract('FiatBase', function(accounts) {
   });
 });
 
-contract('OpenBids', function(accounts) {
+
+contract('OpenBids', function(ob) {
   it("should put 10000 OpenBids in the first account", function() {
-    return OpenBids.deployed().then(function(instance) {
-      return true;
+    var debug_clock, fiatcoin;
+    return DebugClock.deployed().then(function (clock_instance) {
+      debug_clock = clock_instance;
+      return FiatBase.deployed();
+    }).then(function (fiat_instance) {
+      fiatcoin = fiat_instance;
+      web3.toWei(1, "ether");
+      debug_clock.set_time.call(1503387838);
+      fiatcoin.mint.call(this, web3.toWei(1000, "ether"));
     });
   });
 });
