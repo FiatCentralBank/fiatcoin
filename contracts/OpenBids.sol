@@ -97,7 +97,11 @@ contract OpenBids is Ownable {
       ended = false;
   }
 
-  function getBidsLength() returns (uint) {
+  function getFinalRate() returns (uint256) {
+    return finalRate;
+  }
+
+  function getBidsLength() returns (uint256) {
     return bids.list.length;
   }
 
