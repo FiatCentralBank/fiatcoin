@@ -38,7 +38,7 @@ contract OpenBids is Ownable {
   mapping(address => uint[]) public bidsMap;
   address[] addressList;
   DoublyLinkedList bids;
-  
+
   mapping(address => BidderAllowance) public biddersAllowances;
 
   // Parameters of the auction. Times are either
@@ -65,6 +65,7 @@ contract OpenBids is Ownable {
   event AuctionEnded(uint ftcEthRate);
   event AnnounceWinner(address winner, uint fiat);
   event Debug(uint fiatBidAllowance, uint finalRate, uint etherBidAllowance, uint bidDeposit);
+  event Debug2(uint fiat, uint eth);
 
   // The following is a so-called natspec comment,
   // recognizable by the three slashes.
@@ -95,10 +96,6 @@ contract OpenBids is Ownable {
       cummulativeBidFiat = 0;
       finalRate = 0;
       ended = false;
-  }
-
-  function getFinalRate() returns (uint256) {
-    return finalRate;
   }
 
   function getBidsLength() returns (uint256) {

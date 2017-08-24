@@ -40,7 +40,8 @@ contract('FiatBase', function(accounts) {
 
 contract('OpenBids', function(accounts) {
   it("should put 10000 OpenBids in the first account", function() {
-    var debug_clock, fiatcoin, ob;
+    var debug_clock, fiatcoin, ob, fromAddress;
+    fromAddress = '0x7676488bd0c506edae7864021b4862f9f5ba3d6c';
     return DebugClock.deployed().then(function (clock_instance) {
       debug_clock = clock_instance;
       return FiatBase.deployed();
@@ -58,9 +59,9 @@ contract('OpenBids', function(accounts) {
       return ob.getBidsLength.call();
     }).then(function (bids_length) {
       assert.equal(bids_length, 0, "bids len 0");
-      return ob.bid(web3.toWei(5, "ether"), {value: web3.toWei(2000, "finney")});
+      return ob.bid(web3.toWei(5, "ether"), {value: web3.toWei(2000, "finney"), from: fromAddress});
     }).then(function (whatever) {
-      return ob.bid(web3.toWei(5, "ether"), {value: web3.toWei(200, "finney")});
+      return ob.bid(web3.toWei(5, "ether"), {value: web3.toWei(200, "finney"), from: fromAddress});
     }).then(function (whatever) {
       return debug_clock.get_time.call();
     }).then(function (now) {
@@ -68,9 +69,14 @@ contract('OpenBids', function(accounts) {
     }).then(function (whatever) {
       return ob.auctionEnd();
     }).then(function (whatever) {
-      return ob.getFinalRate.call();
+      return ob.finalRate.call();
     }).then(function (final_rate) {
       assert.equal(final_rate, web3.toWei(25000, "finney"), "final rate is correct");
+      assert.equal(web3.eth.getBalance(OpenBids.address), web3.toWei(2200, "finney"), "bid has money");
+      return ob.biddersAllowances.call(fromAddress);
+    }).then(function (result) {
+      assert.equal(result[0], web3.toWei(10, "ether"), "bids has the right fiat allowances");
+      assert.equal(result[1], web3.toWei(1800, "finney"), "bids has the right ether allowances");
       return true;
     });
   });
