@@ -5,8 +5,10 @@ var SafeMath = artifacts.require("./SafeMath.sol");
 var DebugClock = artifacts.require("./time/DebugClock.sol");
 var FiatBase = artifacts.require("./FiatBase.sol");
 var OpenBids = artifacts.require("./OpenBids.sol");
+var AccountsList;
 
-module.exports = function(deployer) {
+module.exports = function(deployer, network, accounts) {
+  AccountsList = accounts;
   deployer.deploy(ConvertLib);
   deployer.link(ConvertLib, MetaCoin);
   deployer.deploy(MetaCoin);

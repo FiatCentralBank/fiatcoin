@@ -9,7 +9,7 @@ var OpenBids = artifacts.require("./OpenBids.sol");
 contract('LibSort', function(accounts) {
   it("should put 10000 LibSort in the first account", function() {
     return LibSort.deployed().then(function(instance) {
-      return true;
+        return true;
     });
   });
 });
@@ -41,7 +41,7 @@ contract('FiatBase', function(accounts) {
 contract('OpenBids', function(accounts) {
   it("should put 10000 OpenBids in the first account", function() {
     var debug_clock, fiatcoin, ob, fromAddress;
-    fromAddress = '0x7676488bd0c506edae7864021b4862f9f5ba3d6c';
+    fromAddress = accounts[0];
     return DebugClock.deployed().then(function (clock_instance) {
       debug_clock = clock_instance;
       return FiatBase.deployed();
@@ -69,6 +69,18 @@ contract('OpenBids', function(accounts) {
     }).then(function (whatever) {
       return ob.auctionEnd();
     }).then(function (whatever) {
+        var hasAuctionEnded = false;
+        // We can loop through result.logs to see if we triggered the Transfer event.
+        for (var i = 0; i < whatever.logs.length; i++) {
+          var log = whatever.logs[i];
+
+          if (log.event == "AuctionEnded") {
+            // We found the event!
+            hasAuctionEnded = true;
+            assert.equal(log.args.ftcEthRate, "25000000000000000000", "AuctionEnded has correct ftcEth rate");
+          }
+        }
+        assert.equal(hasAuctionEnded, true, "AuctionEnded is triggered");
       return ob.finalRate.call();
     }).then(function (final_rate) {
       assert.equal(final_rate, web3.toWei(25000, "finney"), "final rate is correct");

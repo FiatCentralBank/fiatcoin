@@ -64,8 +64,7 @@ contract OpenBids is Ownable {
   event HighestBidIncreased(address bidder, uint amount);
   event AuctionEnded(uint ftcEthRate);
   event AnnounceWinner(address winner, uint fiat);
-  event Debug(uint fiatBidAllowance, uint finalRate, uint etherBidAllowance, uint bidDeposit);
-  event Debug2(uint fiat, uint eth);
+  event SetAllowance(uint fiatBidAllowance, uint finalRate, uint etherBidAllowance, uint bidDeposit);
 
   // The following is a so-called natspec comment,
   // recognizable by the three slashes.
@@ -250,7 +249,7 @@ contract OpenBids is Ownable {
             bid.deposit -
             SafeMath.div(SafeMath.mul(1 ether, fiatBidAllowance), finalRate);
           biddersAllowances[bid.bidder].eth += etherBidAllowance;
-          Debug(fiatBidAllowance, finalRate, etherBidAllowance, bid.deposit);
+          SetAllowance(fiatBidAllowance, finalRate, etherBidAllowance, bid.deposit);
         }
         // not a winner, return all ether sent
         else {
