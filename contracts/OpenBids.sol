@@ -61,10 +61,10 @@ contract OpenBids is Ownable {
   Clock public clock;
 
   // Events that will be fired on changes.
-  event HighestBidIncreased(address bidder, uint amount);
+  event NewBid(address bidder, uint fiat, uint rate, uint deposit);
   event AuctionEnded(uint ftcEthRate);
   event AnnounceWinner(address winner, uint fiat);
-  event SetAllowance(uint fiatBidAllowance, uint finalRate, uint etherBidAllowance, uint bidDeposit);
+  event SetAllowance(uint fiatBidAllowance, uint etherBidAllowance, uint bidDeposit);
 
   // The following is a so-called natspec comment,
   // recognizable by the three slashes.
@@ -140,6 +140,7 @@ contract OpenBids is Ownable {
       require(time_now <= (auctionStart + biddingTime));
 
       uint _rate = SafeMath.div(SafeMath.mul(1 ether, _fiat), msg.value);
+      require(_rate > 0);
 
       if (!searchAddress(msg.sender)) {
         addressList.push(msg.sender);
@@ -162,6 +163,7 @@ contract OpenBids is Ownable {
       bids.tail = bids.list.length - 1;
       bidsMap[msg.sender].push(bidIndex);
       cummulativeBidFiat += _fiat;
+      NewBid(msg.sender, _fiat, _rate, msg.value);
   }
 
   // orders first by rate (low to high) and second by fiat amount (high to low)
@@ -249,7 +251,7 @@ contract OpenBids is Ownable {
             bid.deposit -
             SafeMath.div(SafeMath.mul(1 ether, fiatBidAllowance), finalRate);
           biddersAllowances[bid.bidder].eth += etherBidAllowance;
-          SetAllowance(fiatBidAllowance, finalRate, etherBidAllowance, bid.deposit);
+          SetAllowance(fiatBidAllowance, etherBidAllowance, bid.deposit);
         }
         // not a winner, return all ether sent
         else {
